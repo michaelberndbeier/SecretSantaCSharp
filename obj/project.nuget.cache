@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/tjEyg3pF39fx8tVWBTya4Q4yKh9xLTn3ndjjlevi522ayWVLWShW6kxqguC9ajeG/OqODDH5bAFp8r9Dc1CZw==",
+  "dgSpecHash": "Vfr6zrgAeN0WgBEwyd/z+7Z+WPcLDeYlcr3rn1R7+5K8w0OhB5ApoI+MZ5PesPWbBXiw/8hUqmaZbYqtNRsc+A==",
   "success": true,
-  "projectFilePath": "/Users/michaelberndbeier/src/blogCodeStuff/SecretSantaCSharp/SecretSantaCSharp.csproj",
+  "projectFilePath": "/Users/mbb/tmp/SecretSantaCSharp/SecretSantaCSharp.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

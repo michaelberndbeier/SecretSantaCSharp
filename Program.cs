@@ -1,64 +1,80 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace SecretSantaCSharp
 {
-    class Program
-    {
-        static void Main(string[] args)
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			PrintPairings(GetPairings(GetSenders(GetParticipants(args))));
+		}
+
+		static void PrintPairings(List<Tuple<String, String>> pairings)
+		{
+			foreach (var pairing in pairings) { Console.WriteLine(pairing); }
+		}
+
+		static List<String> GetParticipants(string[] args)
+		{
+			// From pipe call
+			if(Console.IsInputRedirected) { return GetParticipantsFromPipe(); }
+			// Standard arguments call like dotnet run -- Alice Bob Tick Sebastian
+			if(args.Length > 0) { return GetParticipantsFromArgs(args); }
+			return GetDummyParticipants();
+		}
+
+        static List<String> GetParticipantsFromArgs(string[] args)
         {
-            var participants = new List<String>();
-            participants.Add("Michael");
-            participants.Add("Alice");
-            participants.Add("Bob");
-            participants.Add("Charlie");
-
-            var pairings = GetPairingsClassic(participants);
-            PrintPairings(pairings);
-
+			return new List<String>(args);
         }
 
-static void PrintPairings(List<Tuple<String, String>> pairings)
-{
-    foreach(var pair in pairings)
-    {
-        Console.WriteLine("{0} -> {1}", pair.Item1, pair.Item2);
-    }
+		static List<String> GetParticipantsFromPipe()
+		{
+			var participants = new List<String>();
+			String currentItem;
+			while ((currentItem = Console.ReadLine()) != null) { participants.Add(currentItem); }
+			return participants;
+		}
 
-}
+		static List<String> GetDummyParticipants()
+		{
+			return new List<String>(){"Michael", "Alice", "Bob", "Charlie", "Detlef"};
+		}
 
-        static int GetOffset(int numParticipants)
-        {
-            var random = new Random();
-            return random.Next(1, numParticipants);
-        }
+		static List<String> GetSenders(List<String> participants)
+		{
+			var rand = new Random();
+			return participants.OrderBy(participant => rand.Next()).ToList();
+		}
 
-        static int GetReceiverIndex(int senderIndex, int numParticipants, int offset)
-        {
-            int virtualIndex = senderIndex + offset;
-            int adjustedIndex = virtualIndex % numParticipants;
-            return adjustedIndex;
-        }
+		static List<Tuple<String, String>> GetPairings(List<String> senders)
+		{
+			var pairings = new List<Tuple<String, String>>();
 
-        static List<Tuple<String, String>> GetPairingsClassic(List<String> senders)
-        {
+			var numParticipants = senders.Count;
+			var offset = GetOffset(numParticipants);
 
-            var retVal = new List<Tuple<String, String>>();
-            var numParticipants = senders.Count;
-            var offset = GetOffset(numParticipants);
-
-
-            var senderIndex = 0;
-            foreach(var sender in senders)
-            {
-                var receiver = senders[GetReceiverIndex(senderIndex, numParticipants, offset)];
-                retVal.Add(new Tuple<String, String>(sender, receiver));
-                senderIndex++;
+			int senderIndex = 0;
+			foreach (var sender in senders)
+            { 
+                pairings.Add(Tuple.Create(sender, senders[GetReceiverIndex(senderIndex++, numParticipants, offset)])); 
             }
 
-            return retVal;
-        }
+			return pairings;
+		}
 
-    }
+		static int GetOffset(int numParticipants)
+		{
+			var rand = new Random();
+            return rand.Next(numParticipants - 1) + 1;
+		}
+
+		static int GetReceiverIndex(int senderIndex, int numParticipants, int offset) {
+			return (senderIndex + offset) % numParticipants;
+		}
+
+	}
 }
+
